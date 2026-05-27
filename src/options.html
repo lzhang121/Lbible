@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verse Parse 设置</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", "PingFang SC", "Hiragino Sans", sans-serif;
+        background: #f5f5f7;
+        color: #111827;
+        line-height: 1.5;
+      }
+      .wrap {
+        max-width: 520px;
+        margin: 0 auto;
+        padding: 32px 20px 48px;
+      }
+      h1 {
+        margin: 0 0 6px;
+        font-size: 22px;
+      }
+      .subtitle {
+        margin: 0 0 24px;
+        color: #6b7280;
+        font-size: 13px;
+      }
+      .card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 18px 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+        margin-bottom: 14px;
+      }
+      label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      input[type="password"],
+      input[type="text"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 13px;
+      }
+      input:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99,102,241,.15);
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .hint {
+        margin: 10px 0 0;
+        font-size: 12px;
+        color: #6b7280;
+      }
+      .hint a { color: #4f46e5; }
+      button {
+        margin-top: 16px;
+        padding: 10px 18px;
+        border: none;
+        border-radius: 8px;
+        background: #111827;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button:hover { background: #1f2937; }
+      #status {
+        margin-top: 12px;
+        font-size: 13px;
+        min-height: 20px;
+      }
+      #status.ok { color: #15803d; }
+      #status.err { color: #b91c1c; }
+      .toggle {
+        position: relative;
+        width: 44px;
+        height: 24px;
+        flex-shrink: 0;
+      }
+      .toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        inset: 0;
+        background: #d1d5db;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background .2s;
+      }
+      .slider::before {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        left: 3px;
+        top: 3px;
+        background: #fff;
+        border-radius: 50%;
+        transition: transform .2s;
+        box-shadow: 0 1px 3px rgba(0,0,0,.2);
+      }
+      .toggle input:checked + .slider { background: #22c55e; }
+      .toggle input:checked + .slider::before { transform: translateX(20px); }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>Verse Parse 设置</h1>
+      <p class="subtitle">自用模式：Gemini → Groq → OpenRouter 依次尝试，全部失败则回退本地引擎。</p>
+
+      <div class="card">
+        <div class="row">
+          <div>
+            <label for="geminiEnabled" style="margin:0">启用 Gemini 分析</label>
+            <p class="hint" style="margin:4px 0 0">使用 Google AI Studio 免费层（gemini-2.0-flash）</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="geminiEnabled" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <label for="geminiApiKey">Gemini API Key</label>
+        <input type="password" id="geminiApiKey" autocomplete="off" placeholder="AIza..." />
+        <p class="hint">
+          在 <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a> 申请，仅保存在本机。
+          选中的日文会发送到 Google 服务器进行分析。
+        </p>
+      </div>
+
+      <div class="card">
+        <label for="groqApiKey">Groq API Key（备用）</label>
+        <input type="password" id="groqApiKey" autocomplete="off" placeholder="gsk_..." />
+        <p class="hint">
+          在 <a href="https://console.groq.com/keys" target="_blank" rel="noopener">Groq Console</a> 申请免费 Key。
+          Gemini 429 或失败时会自动尝试 Groq（llama-3.3-70b）。
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div>
+            <label for="groqEnabled" style="margin:0">启用 Groq 备用</label>
+            <p class="hint" style="margin:4px 0 0">Gemini 失败时第二顺位</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="groqEnabled" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <label for="openrouterApiKey">OpenRouter API Key（第三备用）</label>
+        <input type="password" id="openrouterApiKey" autocomplete="off" placeholder="sk-or-..." />
+        <p class="hint">
+          在 <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">OpenRouter</a> 申请免费 Key。
+          Groq 也失败时使用（llama-3.3-70b-instruct:free）。
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div>
+            <label for="openrouterEnabled" style="margin:0">启用 OpenRouter 备用</label>
+            <p class="hint" style="margin:4px 0 0">第三顺位，可与前两档同时开启</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="openrouterEnabled" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <button type="button" id="saveBtn">保存设置</button>
+      <p id="status"></p>
+    </div>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

@@ -1,0 +1,171 @@
+* {
+  box-sizing: border-box;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  animation: fadeSlideIn .25s ease both;
+}
+
+/* stagger each card */
+.card:nth-child(1) { animation-delay: .00s; }
+.card:nth-child(2) { animation-delay: .06s; }
+.card:nth-child(3) { animation-delay: .12s; }
+.card:nth-child(4) { animation-delay: .18s; }
+.card:nth-child(5) { animation-delay: .24s; }
+.card:nth-child(6) { animation-delay: .30s; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", "PingFang SC", "Hiragino Sans", sans-serif;
+  background: #f5f5f7;
+  color: #111827;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 10px;
+}
+
+/* ── Cards ── */
+.card {
+  background: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 13px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 6px rgba(0,0,0,.04);
+}
+
+/* ── Section label ── */
+.card h2 {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 12px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  /* default, overridden per-section */
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* per-section accent colours — thin top border + tinted label */
+#sourceSection  { border-top: 2px solid #e2e8f0; }
+#sourceSection h2  { background: #f1f5f9; color: #64748b; }
+
+#translationSection  { border-top: 2px solid #fbbf24; }
+#translationSection h2  { background: #fef9ec; color: #b45309; }
+
+#grammarSection  { border-top: 2px solid #93c5fd; }
+#grammarSection h2  { background: #eff6ff; color: #1d4ed8; }
+
+#verbSection  { border-top: 2px solid #6ee7b7; }
+#verbSection h2  { background: #f0fdf4; color: #15803d; }
+
+#tokenSection  { border-top: 2px solid #c4b5fd; }
+#tokenSection h2  { background: #f5f3ff; color: #6d28d9; }
+
+/* ── Source text ── */
+.source-text {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.8;
+  color: #374151;
+  font-size: 13px;
+}
+
+/* ── Translation ── */
+#translationText {
+  margin: 0;
+  line-height: 1.8;
+  color: #374151;
+}
+
+/* ── Grammar / phrase list ── */
+.grammar-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.grammar-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.grammar-list li::before {
+  content: "–";
+  color: #d1d5db;
+  flex-shrink: 0;
+}
+
+/* ── Entry rows (verbs & nouns): two-line layout ── */
+.entry-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.entry-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.entry-main {
+  font-weight: 700;
+  font-size: 15px;
+  color: #111827;
+  line-height: 1.4;
+}
+
+.entry-sub {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+  color: #9ca3af;
+  padding-left: 2px;
+}
+
+.entry-form {
+  color: #6b7280;
+}
+
+.entry-dot {
+  color: #e5e7eb;
+  font-size: 10px;
+}
+
+.entry-reading,
+.entry-base,
+.entry-gloss {
+  color: #9ca3af;
+}
+
+
+/* ── Warning ── */
+.warning {
+  background: #fffbeb;
+  box-shadow: 0 1px 3px rgba(251,191,36,.15);
+  border-top: 2px solid #fbbf24;
+}
+
+.token-list { display: grid; }

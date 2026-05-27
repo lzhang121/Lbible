@@ -1,0 +1,21 @@
+{
+  "name": "verse-parse",
+  "version": "1.0.0",
+  "description": "Free v1 Japanese reading helper Chrome extension",
+  "main": "index.js",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/smoke-test.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "kuromoji": "^0.1.2",
+    "tiny-segmenter": "^0.2.0"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
+  }
+}
