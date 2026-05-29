@@ -554,6 +554,7 @@ function ensureOverlay() {
   overlayIframe = document.createElement("iframe");
   overlayIframe.title = "Verse Parse Result";
   overlayIframe.setAttribute("frameborder", "0");
+  overlayIframe.setAttribute("allow", "clipboard-write");
   Object.assign(overlayIframe.style, {
     width: "100%",
     height: "calc(100% - 38px)",

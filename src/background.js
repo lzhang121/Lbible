@@ -405,6 +405,7 @@ async function injectOverlayDirectly(tabId, payload, error) {
         iframe.id = "verse-parse-overlay-frame";
         iframe.title = "Verse Parse Result";
         iframe.setAttribute("frameborder", "0");
+        iframe.setAttribute("allow", "clipboard-write");
         Object.assign(iframe.style, {
           width: "100%",
           height: "calc(100% - 38px)",

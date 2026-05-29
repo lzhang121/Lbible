@@ -578,19 +578,40 @@ function syncGrammarActive(surface) {
 async function copyTranslation() {
   const text = translationText?.textContent?.trim();
   if (!text || text === "-") return;
+  const copied = embeddedMode
+    ? copyTextViaTextarea(text)
+    : await copyTextWithClipboardApi(text);
+  if (copied) showCopyToast();
+}
+
+async function copyTextWithClipboardApi(text) {
   try {
     await navigator.clipboard.writeText(text);
-    showCopyToast();
+    return true;
   } catch {
-    // fallback
-    const range = document.createRange();
-    range.selectNodeContents(translationText);
-    const selection = window.getSelection();
-    selection?.removeAllRanges();
-    selection?.addRange(range);
-    document.execCommand("copy");
-    selection?.removeAllRanges();
-    showCopyToast();
+    return copyTextViaTextarea(text);
+  }
+}
+
+function copyTextViaTextarea(text) {
+  try {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    Object.assign(textarea.style, {
+      position: "fixed",
+      left: "-9999px",
+      top: "0",
+      opacity: "0"
+    });
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    const ok = document.execCommand("copy");
+    textarea.remove();
+    return ok;
+  } catch {
+    return false;
   }
 }
 
