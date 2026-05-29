@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verse Parse — Privacy Policy</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+      color: #1f2937;
+      background: #fff;
+    }
+    @media (prefers-color-scheme: dark) {
+      body { color: #e5e7eb; background: #111827; }
+      a { color: #93c5fd; }
+      th, td { border-color: #374151; }
+    }
+    h1 { font-size: 1.75rem; margin-bottom: 0.25rem; }
+    h2 { font-size: 1.15rem; margin-top: 2rem; }
+    .meta { color: #6b7280; font-size: 0.95rem; }
+    .lang-nav { margin: 1.25rem 0 2rem; }
+    .lang-nav a { margin-right: 1rem; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+    th, td { border: 1px solid #d1d5db; padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+    th { background: rgba(0,0,0,0.04); }
+    .notice {
+      margin-top: 2rem;
+      padding: 0.75rem 1rem;
+      border-left: 4px solid #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+      font-size: 0.95rem;
+    }
+    section[lang="zh"] { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #d1d5db; }
+    @media (prefers-color-scheme: dark) {
+      section[lang="zh"] { border-top-color: #374151; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Verse Parse — Privacy Policy</h1>
+  <p class="meta">Last updated: 2026-05-27</p>
+  <nav class="lang-nav" aria-label="Language">
+    <a href="#en">English</a>
+    <a href="#zh">中文</a>
+  </nav>
+
+  <section id="en" lang="en">
+    <h2>Overview</h2>
+    <p>Verse Parse is a Chrome extension that helps Chinese-speaking users read Japanese text. Analysis runs locally by default. You may optionally enable AI (Gemini, Groq, or OpenRouter) in options using your own API keys.</p>
+
+    <h2>Data we process</h2>
+    <p>When you trigger analysis (select text, context menu, <code>Ctrl+Shift+Y</code>, or toolbar action), the extension reads:</p>
+    <ul>
+      <li><strong>Selected text</strong> (may include ruby markup for readings)</li>
+      <li><strong>Current page URL</strong> (stored locally in analysis metadata; not sent to our servers)</li>
+    </ul>
+    <p>The extension does not scrape full pages or scan content in the background.</p>
+
+    <h2>Optional AI</h2>
+    <p>If you enable AI and provide an API key, selected text is sent over HTTPS to the provider you choose. Keys are stored only in <code>chrome.storage.local</code> on your device. We do not collect or relay your keys.</p>
+
+    <h2>Local storage on your device</h2>
+    <table>
+      <thead><tr><th>Key</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td><code>overlayLayout</code></td><td>Panel position and size</td></tr>
+        <tr><td><code>aiSetupHintDismissed</code></td><td>Hide “Set up AI” hint</td></tr>
+        <tr><td><code>geminiApiKey</code>, etc.</td><td>Optional AI settings (local only)</td></tr>
+      </tbody>
+    </table>
+
+    <h2>What we do not do</h2>
+    <ul>
+      <li>Sell or trade user data</li>
+      <li>Use analytics or ad trackers</li>
+      <li>Read page content without user action</li>
+      <li>Require accounts or sign-in</li>
+    </ul>
+
+    <h2>Permissions</h2>
+    <table>
+      <thead><tr><th>Permission</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><code>contextMenus</code></td><td>Right-click “Analyze selection”</td></tr>
+        <tr><td><code>activeTab</code> / <code>tabs</code></td><td>Read selection and URL when requested</td></tr>
+        <tr><td><code>scripting</code></td><td>Shortcut selection read; fallback overlay</td></tr>
+        <tr><td><code>storage</code></td><td>Preferences and optional AI keys (local)</td></tr>
+        <tr><td><code>&lt;all_urls&gt;</code></td><td>Analyze user-selected Japanese on any site</td></tr>
+        <tr><td>AI API hosts</td><td>Only when user enables AI with own key</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Third-party services (optional AI)</h2>
+    <ul>
+      <li><a href="https://ai.google.dev/gemini-api/terms">Google Gemini API</a></li>
+      <li><a href="https://groq.com/privacy-policy/">Groq</a></li>
+      <li><a href="https://openrouter.ai/privacy">OpenRouter</a></li>
+    </ul>
+
+    <h2>Retention &amp; deletion</h2>
+    <p>Local data remains until you clear extension storage or uninstall. AI retention follows the provider’s policy.</p>
+
+    <h2>Children</h2>
+    <p>Not directed at children under 13.</p>
+
+    <h2>Contact</h2>
+    <p>Support: <a id="support-email-en" href="mailto:zhspark@gmail.com">zhspark@gmail.com</a></p>
+  </section>
+
+  <section id="zh" lang="zh-Hans">
+    <h2>概述</h2>
+    <p>Verse Parse 是面向中文用户的日语阅读辅助 Chrome 扩展。默认本地分析；可在选项页自愿启用 AI（Gemini / Groq / OpenRouter）并自行提供 API Key。</p>
+
+    <h2>处理的数据</h2>
+    <p>仅在您主动操作（划选、右键菜单、快捷键 <code>Ctrl+Shift+Y</code>、工具栏）时读取：</p>
+    <ul>
+      <li><strong>选中的文本</strong>（可能含 ruby 注音）</li>
+      <li><strong>当前页面 URL</strong>（仅存于本地分析元数据）</li>
+    </ul>
+    <p>不会主动抓取整页或后台扫描。</p>
+
+    <h2>可选 AI</h2>
+    <p>启用 AI 并填写 Key 后，选中文字经 HTTPS 发送至您选择的第三方。Key 仅保存在本机 <code>chrome.storage.local</code>。</p>
+
+    <h2>本地存储</h2>
+    <table>
+      <thead><tr><th>键名</th><th>用途</th></tr></thead>
+      <tbody>
+        <tr><td><code>overlayLayout</code></td><td>面板位置与尺寸</td></tr>
+        <tr><td><code>aiSetupHintDismissed</code></td><td>是否隐藏 AI 提示</td></tr>
+        <tr><td><code>geminiApiKey</code> 等</td><td>AI 配置（仅本地）</td></tr>
+      </tbody>
+    </table>
+
+    <h2>我们不会</h2>
+    <ul>
+      <li>出售或交易用户数据</li>
+      <li>使用分析/广告追踪</li>
+      <li>在无用户操作时读取页面</li>
+      <li>要求注册登录</li>
+    </ul>
+
+    <h2>权限说明</h2>
+    <p>与英文版相同：<code>contextMenus</code>、<code>tabs</code>、<code>scripting</code>、<code>storage</code>、<code>&lt;all_urls&gt;</code> 及 AI 相关 host 均服务于用户主动触发的选区分析。</p>
+
+    <h2>联系</h2>
+    <p>支持邮箱：<a id="support-email-zh" href="mailto:zhspark@gmail.com">zhspark@gmail.com</a></p>
+  </section>
+
+  <p class="meta">Policy URL: <a href="https://lzhang121.github.io/Lbible/privacy.html">https://lzhang121.github.io/Lbible/privacy.html</a></p>
+</body>
+</html>

@@ -1,11 +1,12 @@
 {
   "name": "verse-parse",
   "version": "1.0.0",
-  "description": "Free v1 Japanese reading helper Chrome extension",
+  "description": "Chrome extension for Japanese text analysis with local parsing and optional AI",
   "main": "index.js",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node scripts/smoke-test.mjs"
+    "test": "node scripts/smoke-test.mjs",
+    "package": "node scripts/build.mjs && node scripts/package.mjs"
   },
   "keywords": [],
   "author": "",

@@ -21,7 +21,9 @@ async function main() {
   await copyFile("sidepanel.html");
   await copyFile("sidepanel.js");
   await copyFile("sidepanel.css");
+  await copyFile("vp-theme.css");
   await copyFile("options.html");
+  await copyFile("options.css");
   await copyFile("options.js");
 
   await fs.mkdir(path.join(distDir, "vendor"), { recursive: true });

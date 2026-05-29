@@ -71,7 +71,114 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 let LAST_CLICKED_PAYLOAD = null;
 let overlayContainer = null;
 let overlayIframe = null;
+let overlayIframeReady = false;
+let pendingPanelMessage = null;
 let autoAnalyzeTimer = null;
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && isOverlayVisible()) {
+    event.preventDefault();
+    event.stopPropagation();
+    closeOverlay();
+  }
+}, true);
+
+function isOverlayVisible() {
+  return Boolean(overlayContainer && overlayContainer.style.display !== "none");
+}
+
+function closeOverlay() {
+  if (!overlayContainer) return;
+  saveOverlayLayout();
+  overlayContainer.remove();
+  overlayContainer = null;
+  overlayIframe = null;
+  overlayIframeReady = false;
+  pendingPanelMessage = null;
+  _switchTrack = null;
+  _switchThumb = null;
+  _switchLabel = null;
+}
+
+function postToPanel(message) {
+  if (!overlayIframe?.contentWindow) return;
+  overlayIframe.contentWindow.postMessage(message, "*");
+}
+
+function flushPendingPanelMessage() {
+  if (!overlayIframeReady || !pendingPanelMessage) return;
+  postToPanel(pendingPanelMessage);
+  pendingPanelMessage = null;
+}
+
+function sendAnalyzeToPanel(payload, error) {
+  const message = {
+    type: "VP_ANALYZE",
+    payload: payload || null,
+    error: error || ""
+  };
+  if (overlayIframeReady) {
+    postToPanel(message);
+  } else {
+    pendingPanelMessage = message;
+  }
+}
+
+function revealOverlay() {
+  if (!overlayContainer) return;
+  overlayContainer.style.display = "block";
+  overlayContainer.style.opacity = "0";
+  overlayContainer.style.transform = "scale(0.97) translateY(6px)";
+  overlayContainer.style.transition = "opacity 180ms ease, transform 180ms ease";
+  requestAnimationFrame(() => {
+    overlayContainer.style.opacity = "1";
+    overlayContainer.style.transform = "scale(1) translateY(0)";
+  });
+}
+
+function applyOverlayLayout(layout) {
+  if (!overlayContainer || !layout) return;
+  if (Number.isFinite(layout.width)) {
+    overlayContainer.style.width = `${layout.width}px`;
+  }
+  if (Number.isFinite(layout.height)) {
+    overlayContainer.style.height = `${layout.height}px`;
+  }
+  if (Number.isFinite(layout.top)) {
+    overlayContainer.style.top = `${layout.top}px`;
+  }
+  if (Number.isFinite(layout.left)) {
+    overlayContainer.style.left = `${layout.left}px`;
+    overlayContainer.style.right = "auto";
+  }
+}
+
+function saveOverlayLayout() {
+  if (!overlayContainer || !isExtensionContextValid()) return;
+  const rect = overlayContainer.getBoundingClientRect();
+  try {
+    void chrome.storage.local.set({
+      overlayLayout: {
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
+        left: Math.round(rect.left),
+        top: Math.round(rect.top)
+      }
+    });
+  } catch (_error) {
+    // ignore
+  }
+}
+
+async function loadOverlayLayout() {
+  if (!overlayContainer || !isExtensionContextValid()) return;
+  try {
+    const { overlayLayout } = await chrome.storage.local.get("overlayLayout");
+    if (overlayLayout) applyOverlayLayout(overlayLayout);
+  } catch (_error) {
+    // ignore
+  }
+}
 
 document.addEventListener("click", (event) => {
   if (!_vpEnabled) return;
@@ -168,28 +275,8 @@ function showOverlay(payload, error) {
   ensureOverlay();
   if (!overlayIframe) return;
 
-  const params = new URLSearchParams({ embedded: "1" });
-
-  if (payload?.text) {
-    params.set("text", payload.text);
-    params.set("sourceUrl", payload.sourceUrl || window.location.href);
-  }
-  if (error) {
-    params.set("error", error);
-  }
-
-  const sidepanelUrl = getRuntimeUrl("sidepanel.html");
-  if (!sidepanelUrl) return;
-
-  overlayIframe.src = `${sidepanelUrl}?${params.toString()}`;
-  overlayContainer.style.display = "block";
-  overlayContainer.style.opacity = "0";
-  overlayContainer.style.transform = "scale(0.97) translateY(6px)";
-  overlayContainer.style.transition = "opacity 180ms ease, transform 180ms ease";
-  requestAnimationFrame(() => {
-    overlayContainer.style.opacity = "1";
-    overlayContainer.style.transform = "scale(1) translateY(0)";
-  });
+  sendAnalyzeToPanel(payload, error);
+  revealOverlay();
 }
 
 function ensureOverlay() {
@@ -221,11 +308,11 @@ function ensureOverlay() {
     height: "100vh",
     minHeight: "200px",
     zIndex: "2147483647",
-    boxShadow: "0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)",
-    border: "1px solid #e5e7eb",
-    borderRadius: "14px 0 0 14px",
+    boxShadow: "0 12px 40px rgba(15,23,42,0.12), 0 4px 12px rgba(15,23,42,0.06)",
+    border: "1px solid rgba(15,23,42,0.08)",
+    borderRadius: "16px 0 0 16px",
     overflow: "hidden",
-    background: "#fff",
+    background: "#f8fafc",
     display: "none",
     userSelect: "none"
   });
@@ -235,21 +322,46 @@ function ensureOverlay() {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: "10px 14px",
-    background: "#ffffff",
-    borderBottom: "1px solid #f3f4f6",
+    padding: "11px 14px",
+    background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)",
+    borderBottom: "1px solid rgba(15,23,42,0.06)",
     fontSize: "11px",
     fontWeight: "700",
-    letterSpacing: ".08em",
+    letterSpacing: ".1em",
     textTransform: "uppercase",
-    color: "#9ca3af",
+    color: "#64748b",
     cursor: "grab",
     flexShrink: "0"
   });
 
+  const titleWrap = document.createElement("div");
+  Object.assign(titleWrap.style, {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px"
+  });
+
+  const iconImg = document.createElement("img");
+  iconImg.src = getRuntimeUrl("icons/icon16.png") || "";
+  iconImg.width = 16;
+  iconImg.height = 16;
+  iconImg.alt = "";
+  Object.assign(iconImg.style, {
+    borderRadius: "4px",
+    flexShrink: "0"
+  });
+  titleWrap.appendChild(iconImg);
+
   const titleSpan = document.createElement("span");
   titleSpan.textContent = "Verse Parse";
-  header.appendChild(titleSpan);
+  Object.assign(titleSpan.style, {
+    background: "linear-gradient(135deg, #15803d 0%, #b45309 100%)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    backgroundClip: "text"
+  });
+  titleWrap.appendChild(titleSpan);
+  header.appendChild(titleWrap);
 
   const headerActions = document.createElement("div");
   Object.assign(headerActions.style, {
@@ -262,15 +374,16 @@ function ensureOverlay() {
   });
 
   const btnStyle = {
-    border: "1px solid #e5e7eb",
-    background: "#f9fafb",
-    color: "#6b7280",
-    borderRadius: "6px",
-    padding: "2px 10px",
+    border: "1px solid rgba(15,23,42,0.08)",
+    background: "#ffffff",
+    color: "#64748b",
+    borderRadius: "8px",
+    padding: "3px 10px",
     cursor: "pointer",
     fontSize: "11px",
     fontWeight: "500",
-    flexShrink: "0"
+    flexShrink: "0",
+    boxShadow: "0 1px 2px rgba(15,23,42,0.04)"
   };
 
   // ── Toggle switch (button, not label — avoids click being swallowed) ──
@@ -390,13 +503,7 @@ function ensureOverlay() {
   closeButton.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!overlayContainer) return;
-    overlayContainer.remove();
-    overlayContainer = null;
-    overlayIframe = null;
-    _switchTrack = null;
-    _switchThumb = null;
-    _switchLabel = null;
+    closeOverlay();
   }, true);
   headerActions.appendChild(closeButton);
   header.appendChild(headerActions);
@@ -438,6 +545,7 @@ function ensureOverlay() {
       header.style.cursor = "grab";
       document.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseup",   onUp);
+      saveOverlayLayout();
     }
     document.addEventListener("mousemove", onMove);
     document.addEventListener("mouseup",   onUp);
@@ -453,6 +561,15 @@ function ensureOverlay() {
     background: "#fff",
     display: "block"
   });
+  overlayIframe.addEventListener("load", () => {
+    overlayIframeReady = true;
+    flushPendingPanelMessage();
+  });
+
+  const sidepanelUrl = getRuntimeUrl("sidepanel.html");
+  if (sidepanelUrl) {
+    overlayIframe.src = `${sidepanelUrl}?embedded=1`;
+  }
 
   // ── Resize handle (bottom edge) ──
   const resizeHandle = document.createElement("div");
@@ -494,6 +611,7 @@ function ensureOverlay() {
     function onUp() {
       document.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseup",   onUp);
+      saveOverlayLayout();
     }
     document.addEventListener("mousemove", onMove);
     document.addEventListener("mouseup",   onUp);
@@ -503,6 +621,7 @@ function ensureOverlay() {
   overlayContainer.appendChild(overlayIframe);
   overlayContainer.appendChild(resizeHandle);
   document.documentElement.appendChild(overlayContainer);
+  void loadOverlayLayout();
 }
 
 function safeSendMessage(message) {

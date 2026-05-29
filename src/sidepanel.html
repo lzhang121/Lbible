@@ -4,41 +4,99 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>日语经文分析</title>
+    <link rel="stylesheet" href="./vp-theme.css" />
     <link rel="stylesheet" href="./sidepanel.css" />
   </head>
   <body>
-    <main class="layout">
-      <p id="statusText" style="display:none"></p>
+    <main class="layout" id="layoutRoot">
+      <div class="panel-top" id="panelTop">
+        <div id="statusBar" class="status-bar is-hint" hidden>
+          <span id="statusDot" class="status-dot"></span>
+          <p id="statusText"></p>
+        </div>
 
-      <section class="card" id="sourceSection">
-        <p id="sourceText" class="source-text">-</p>
-      </section>
+        <div id="warningBanner" class="warning-banner" hidden>
+          <div class="warning-banner-body">
+            <p id="warningText"></p>
+            <button type="button" id="warningRetryBtn" class="warning-retry-btn" hidden>重试 AI</button>
+          </div>
+        </div>
 
-      <section class="card" id="translationSection">
-        <h2>翻译</h2>
-        <p id="translationText">-</p>
-      </section>
+        <div id="aiSetupHint" class="ai-setup-hint" hidden>
+          <span id="aiSetupMessage">本地分析翻译较简略，配置 AI 可获得更自然的结果。</span>
+          <div class="ai-setup-actions">
+            <button type="button" id="aiSetupBtn" class="ai-setup-btn">设置 AI</button>
+            <button type="button" id="aiSetupDismiss" class="ai-setup-dismiss">不再提示</button>
+          </div>
+        </div>
+      </div>
 
-      <section class="card" id="grammarSection">
-        <h2>短语</h2>
-        <ul id="grammarList" class="grammar-list"></ul>
-      </section>
+      <div id="skeletonBlock" class="skeleton-block" hidden>
+        <div class="skeleton-card">
+          <div class="skeleton-line w-full"></div>
+          <div class="skeleton-line w-90"></div>
+          <div class="skeleton-line w-75"></div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-line w-40"></div>
+          <div class="skeleton-line w-full"></div>
+          <div class="skeleton-line w-85"></div>
+        </div>
+      </div>
 
-      <section class="card" id="verbSection">
-        <h2>动词</h2>
-        <div id="verbList" class="token-list"></div>
-      </section>
+      <div class="analysis-body" id="analysisBody" hidden>
+        <div class="read-block" id="readBlock">
+          <section class="card" id="sourceSection">
+            <h2>原文</h2>
+            <p id="sourceText" class="source-text">-</p>
+          </section>
 
-      <section class="card" id="tokenSection">
-        <h2>名词</h2>
-        <div id="tokenList" class="token-list"></div>
-      </section>
+          <section class="card card-copyable" id="translationSection" title="点击复制翻译">
+            <h2>翻译</h2>
+            <p id="translationText">-</p>
+            <span class="copy-hint">点击复制</span>
+          </section>
+        </div>
 
-      <section class="card warning" id="warningCard" hidden>
-        <h2>提示</h2>
-        <p id="warningText"></p>
-      </section>
+        <div class="detail-section" id="detailSection">
+          <div class="tab-bar" id="tabBar" role="tablist">
+            <button type="button" class="tab-btn is-active" data-tab="vocab" role="tab">词汇</button>
+            <button type="button" class="tab-btn" data-tab="grammar" role="tab">语法</button>
+          </div>
+
+          <div class="detail-panels" id="detailPanels">
+          <div class="tab-panel is-active" data-panel="vocab" role="tabpanel">
+            <details class="fold-section" id="verbFold" open>
+              <summary>动词 <span class="fold-count" id="verbCount"></span></summary>
+              <div id="verbList" class="chip-list"></div>
+            </details>
+            <details class="fold-section" id="tokenFold" open>
+              <summary>名词 <span class="fold-count" id="tokenCount"></span></summary>
+              <div id="tokenList" class="chip-list"></div>
+            </details>
+          </div>
+
+          <div class="tab-panel" data-panel="grammar" role="tabpanel">
+            <details class="fold-section" id="grammarFold" open>
+              <summary>短语 <span class="fold-count" id="grammarCount"></span></summary>
+              <ul id="grammarList" class="grammar-list"></ul>
+            </details>
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="emptyGuide" class="empty-guide">
+        <p class="empty-guide-title">开始使用 Verse Parse</p>
+        <ol class="empty-guide-steps">
+          <li>在网页中<strong>选中</strong>或<strong>点击</strong>一段日文</li>
+          <li>面板会自动分析并显示翻译与词汇</li>
+          <li>可在设置中配置 Gemini / Groq 提升翻译质量</li>
+        </ol>
+      </div>
     </main>
+
+    <div id="copyToast" class="copy-toast" hidden>已复制</div>
 
     <script src="./vendor/tiny_segmenter.js"></script>
     <script src="./vendor/kuromoji.js"></script>

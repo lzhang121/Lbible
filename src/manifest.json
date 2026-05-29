@@ -8,7 +8,6 @@
     "activeTab",
     "scripting",
     "storage",
-    "sidePanel",
     "tabs"
   ],
   "host_permissions": [
@@ -39,9 +38,11 @@
         "sidepanel.html",
         "sidepanel.js",
         "sidepanel.css",
+        "vp-theme.css",
+        "icons/*",
         "analyzer/*.js",
         "vendor/tiny_segmenter.js",
-      "vendor/kuromoji.js",
+        "vendor/kuromoji.js",
         "vendor/dict/*"
       ],
       "matches": [
@@ -49,9 +50,6 @@
       ]
     }
   ],
-  "side_panel": {
-    "default_path": "sidepanel.html"
-  },
   "commands": {
     "analyze-selection": {
       "description": "Analyze current selected Japanese text",
